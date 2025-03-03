@@ -30,3 +30,10 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
     });
 });
 
+messaging.onMessage((payload) => {
+    console.log("Message received:", payload);
+    new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: "/logo.png",
+    });
+});
