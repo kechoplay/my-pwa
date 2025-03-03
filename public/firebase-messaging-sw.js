@@ -22,3 +22,11 @@ messaging.onBackgroundMessage((payload) => {
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+messaging.onMessage((payload) => {
+    console.log("Message received:", payload);
+    new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: "/logo.png",
+    });
+});
