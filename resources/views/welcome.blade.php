@@ -30,7 +30,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();
-    const vapidKey = "BPMgoZWm-lUS1FQXjO_P_BQ3AQCCRDPp56eZz0DHxx9ZJMn-CHgfwv7aRlG0oJwB38vekA3C0OUS_wpgpRWY6oM"; // Từ Firebase Console
+    const vapidKey = "BCl_JcvmY9dVoI6b-aYjPUTc3gn1BEfiULEN0EOEfByy-fkxN1p-d4YCyw7PNPaFUyuGadmsu90bjle0Nzu0Idw"; // Từ Firebase Console
 </script>
 <script src="/js/app.js"></script>
 </body>

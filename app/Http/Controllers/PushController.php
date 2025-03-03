@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Kreait\Firebase\Exception\FirebaseException;
-use Kreait\Firebase\Exception\MessagingException;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 
@@ -35,7 +34,8 @@ class PushController extends Controller
                 'body' => 'This is a Firebase push notification.'
             ]);
 
-        $messaging->sendMulticast($message, $tokens);
+        $response = $messaging->sendMulticast($message, $tokens);
+        Log::debug($response);
         return 'Push sent!';
     }
 }
