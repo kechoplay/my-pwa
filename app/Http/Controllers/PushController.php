@@ -22,7 +22,7 @@ class PushController extends Controller
 
     public function sendPush()
     {
-        $factory = (new Factory)->withServiceAccount(base_path('/public/firebase-credentials.json'));
+        $factory = (new Factory)->withServiceAccount('/public/firebase-credentials.json');
         $messaging = $factory->createMessaging();
 
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
