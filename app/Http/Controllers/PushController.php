@@ -22,15 +22,10 @@ class PushController extends Controller
         return response()->json(['message' => 'Subscription saved']);
     }
 
-    /**
-     * @throws MessagingException
-     * @throws FirebaseException
-     */
     public function sendPush()
     {
         $factory = (new Factory)->withServiceAccount(public_path('firebase-credentials.json'));
         $messaging = $factory->createMessaging();
-
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
         if (empty($tokens)) return 'No subscribers';
 
@@ -40,7 +35,7 @@ class PushController extends Controller
                 'body' => 'This is a Firebase push notification.'
             ]);
 
-        $response = $messaging->sendMulticast($message, $tokens);
+        $messaging->sendMulticast($message, $tokens);
         return 'Push sent!';
     }
 }
