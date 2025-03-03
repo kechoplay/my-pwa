@@ -2,13 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use Firebase\JWT\JWT;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Messaging\CloudMessage;
 
 class PushController extends Controller
 {
+    private function getAccessToken()
+    {
+        $credentials = json_decode(file_get_contents(public_path('firebase-credentials.json')), true);
+        $clientEmail = $credentials['client_email'];
+        $privateKey = $credentials['private_key'];
+
+        // Tạo JWT
+        $now = time();
+        $payload = [
+            'iss' => $clientEmail, // Issuer (client email từ service account)
+            'sub' => $clientEmail, // Subject
+            'aud' => 'https://oauth2.googleapis.com/token', // Audience
+            'iat' => $now, // Issued at
+            'exp' => $now + 3600, // Expiration (1 giờ)
+            'scope' => 'https://www.googleapis.com/auth/firebase.messaging' // Scope cho FCM
+        ];
+
+        $jwt = JWT::encode($payload, $privateKey, 'RS256');
+        // Gửi yêu cầu lấy access token
+        $client = new Client();
+        $response = $client->post('https://oauth2.googleapis.com/token', [
+            'form_params' => [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion' => $jwt,
+            ],
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), true);
+        return $data['access_token'];
+    }
+
     public function subscribe(Request $request)
     {
         $token = $request->input('token');
@@ -22,18 +54,39 @@ class PushController extends Controller
 
     public function sendPush()
     {
-        $factory = (new Factory)->withServiceAccount(public_path('firebase-credentials.json'));
-        $messaging = $factory->createMessaging();
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
-        if (empty($tokens)) return 'No subscribers';
+        if (empty($tokens)) {
+            return 'No tokens available';
+        }
 
-        $message = CloudMessage::new()
-            ->withNotification([
-                'title' => 'Hello from Laravel!',
-                'body' => 'This is a Firebase push notification.'
+        $client = new Client();
+        $accessToken = $this->getAccessToken();
+        $projectId = env('FIREBASE_PROJECT_ID');
+        $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
+
+        $payload = [
+            'message' => [
+                'token' => $tokens[0], // Gửi đến token đầu tiên, có thể lặp qua tất cả
+                'notification' => [
+                    'title' => 'Test from Laravel',
+                    'body' => 'This is a push via HTTP v1!'
+                ]
+            ]
+        ];
+
+        try {
+            $response = $client->post($url, [
+                'headers' => [
+                    'Authorization' => "Bearer $accessToken",
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $payload,
             ]);
-
-        $response = $messaging->sendMulticast($message, $tokens);
-        return 'Push sent!';
+            return $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            return 'Error: ' . $e->getMessage();
+        } catch (GuzzleException $e) {
+            return 'Error: ' . $e->getMessage();
+        }
     }
 }

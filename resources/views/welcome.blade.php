@@ -30,6 +30,42 @@
     };
     firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then((reg) => console.log('Service Worker registered:', reg));
+    }
+
+    function subscribeToPush() {
+        Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+                messaging.getToken({ vapidKey: '{{ env('FIREBASE_VAPID_KEY') }}' })
+                    .then((token) => {
+                        console.log('Token:', token);
+                        fetch('/save-token', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ token })
+                        }).then(res => res.json())
+                            .then(data => console.log('Token saved:', data));
+                    })
+                    .catch((err) => console.error('Error:', err));
+            }
+        });
+    }
+
+    messaging.onMessage((payload) => {
+        console.log('Foreground:', payload);
+        navigator.serviceWorker.ready.then((reg) =>
+            reg.showNotification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: '/icon.png'
+            })
+        );
+    });
     const vapidKey = "BCl_JcvmY9dVoI6b-aYjPUTc3gn1BEfiULEN0EOEfByy-fkxN1p-d4YCyw7PNPaFUyuGadmsu90bjle0Nzu0Idw"; // Từ Firebase Console
 </script>
 <script src="/js/app.js"></script>
