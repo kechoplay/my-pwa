@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Laravel PWA</title>
-    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="manifest" href="/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="/css/app.css">
     <!-- Tải Firebase Compat SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
@@ -32,6 +32,6 @@
     const messaging = firebase.messaging();
     const vapidKey = "BPMgoZWm-lUS1FQXjO_P_BQ3AQCCRDPp56eZz0DHxx9ZJMn-CHgfwv7aRlG0oJwB38vekA3C0OUS_wpgpRWY6oM"; // Từ Firebase Console
 </script>
-<script src="{{ asset('js/app.js') }}"></script>
+<script src="/js/app.js"></script>
 </body>
 </html>
