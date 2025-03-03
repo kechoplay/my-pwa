@@ -35,7 +35,6 @@ class PushController extends Controller
             ]);
 
         $response = $messaging->sendMulticast($message, $tokens);
-        Log::debug($response);
         return 'Push sent!';
     }
 }
