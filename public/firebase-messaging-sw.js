@@ -15,12 +15,25 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
+    console.log("on backgouernd:", payload);
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification?.body || 'No body',
         icon: '/images/favicon/favicon-96x96.png'
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('push', function(event) {
+    const data = event.data.json();  // Assuming the server sends JSON
+    const options = {
+        body: data.body,
+        icon: 'icon.png',
+        badge: 'badge.png'
+    };
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
 });
 
 messaging.onMessage((payload) => {
