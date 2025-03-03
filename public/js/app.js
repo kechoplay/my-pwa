@@ -31,9 +31,11 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
 });
 
 messaging.onMessage((payload) => {
-    console.log("Message received:", payload);
-    new Notification(payload.notification.title, {
+    console.log('Foreground message:', payload);
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
         body: payload.notification.body,
-        icon: "/logo.png",
-    });
+        icon: '/images/icon-192.png'
+    };
+    new Notification(notificationTitle, notificationOptions);
 });
