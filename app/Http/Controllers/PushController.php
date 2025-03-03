@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\MessagingException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 
@@ -20,6 +22,10 @@ class PushController extends Controller
         return response()->json(['message' => 'Subscription saved']);
     }
 
+    /**
+     * @throws MessagingException
+     * @throws FirebaseException
+     */
     public function sendPush()
     {
         $factory = (new Factory)->withServiceAccount(public_path('firebase-credentials.json'));
@@ -34,7 +40,7 @@ class PushController extends Controller
                 'body' => 'This is a Firebase push notification.'
             ]);
 
-        $messaging->sendMulticast($message, $tokens);
+        $response = $messaging->sendMulticast($message, $tokens);
         return 'Push sent!';
     }
 }
