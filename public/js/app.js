@@ -30,14 +30,11 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
     });
 });
 
-messaging.onBackgroundMessage((payload) => {
-    if (!navigator.serviceWorker.controller) {
-        console.log('Background message received:', payload);
-        const notificationTitle = payload.notification.title;
-        const notificationOptions = {
-            body: payload.notification.body,
-            icon: '/images/favicon/favicon-96x96.png'
-        };
-        self.registration.showNotification(notificationTitle, notificationOptions);
-    }
+
+messaging.onMessage((payload) => {
+    console.log("Message received:", payload);
+    new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: '/images/favicon/favicon-96x96.png'
+    });
 });
