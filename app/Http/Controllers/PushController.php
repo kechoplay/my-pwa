@@ -60,15 +60,22 @@ class PushController extends Controller
 
     public function sendPush()
     {
-        $credentials = json_decode(file_get_contents(public_path('firebase-credentials.json')), true);
+        $client = new \Google_Client();
+        $client->setAuthConfig(public_path('firebase-credentials.json')); // Đường dẫn đến tệp JSON
+        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+
+        $client->setAccessType('offline');
+        $client->fetchAccessTokenWithAssertion();
+        $tokenArray = $client->getAccessToken();
+        $tokenArray['created'] = time();
+        $client->setAccessToken($tokenArray);
+        $accessToken = $tokenArray['access_token'];
+
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
         if (empty($tokens)) {
             return 'No tokens available';
         }
 
-        $jwt = $this->generateJwt($credentials);
-        $accessToken = $this->getAccessToken($jwt);
-        $url = 'https://fcm.googleapis.com/v1/projects/your-project-id/messages:send';
         $headers = [
             'Authorization' => 'Bearer ' . $accessToken,
             'Content-Type' => 'application/json',
