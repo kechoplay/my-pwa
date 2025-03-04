@@ -56,16 +56,6 @@
             }
         });
     }
-
-    messaging.onMessage((payload) => {
-        console.log('Foreground:', payload);
-        navigator.serviceWorker.ready.then((reg) =>
-            reg.showNotification(payload.notification.title, {
-                body: payload.notification.body,
-                icon: '/icon.png'
-            })
-        );
-    });
     const vapidKey = "BHxUOXVdEMbqXfbDKwvjHoKfRA2W-nLWd2TlHqmQNYSPIl2eo7LY39su6bDYFPutNlIpILoBDFjdB9rSNdZ-Euw"; // Từ Firebase Console
 </script>
 <script src="/js/app.js"></script>
