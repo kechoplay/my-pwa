@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PushController extends Controller
 {
@@ -44,7 +45,16 @@ class PushController extends Controller
             'assertion' => $jwt,
         ]);
 
-        return $response->json()['access_token'];
+        if (!$response->successful()) {
+            throw new \Exception('Failed to get access token: ' . $response->body());
+        }
+
+        $data = $response->json();
+        if (!isset($data['access_token'])) {
+            throw new \Exception('No access token in response: ' . json_encode($data));
+        }
+
+        return $data['access_token'];
     }
 
     public function subscribe(Request $request)
@@ -60,16 +70,16 @@ class PushController extends Controller
 
     public function sendPush()
     {
-        $client = new \Google_Client();
-        $client->setAuthConfig(public_path('firebase-credentials.json')); // Đường dẫn đến tệp JSON
-        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        $serviceAccount = public_path('firebase-credentials.json');
+        $credentials = json_decode(file_get_contents($serviceAccount), true);
 
-        $client->setAccessType('offline');
-        $client->fetchAccessTokenWithAssertion();
-        $tokenArray = $client->getAccessToken();
-        $tokenArray['created'] = time();
-        $client->setAccessToken($tokenArray);
-        $accessToken = $tokenArray['access_token'];
+        try {
+            $jwt = $this->generateJwt($credentials);
+            $accessToken = $this->getAccessToken($jwt);
+            Log::info('Access Token: ' . $accessToken);
+        } catch (\Exception $e) {
+            return 'Auth Error: ' . $e->getMessage();
+        }
 
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
         if (empty($tokens)) {
@@ -96,7 +106,7 @@ class PushController extends Controller
 
         try {
             $response = $client->post($url, [
-                $headers,
+                'headers' => $headers,
                 'json' => $payload,
             ]);
             return $response->getBody()->getContents();
