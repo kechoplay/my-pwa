@@ -6,6 +6,7 @@ use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -73,13 +74,10 @@ class PushController extends Controller
         $serviceAccount = public_path('firebase-credentials.json');
         $credentials = json_decode(file_get_contents($serviceAccount), true);
 
-        try {
+        $accessToken = Cache::remember('fcm_access_token', 3500, function () use ($credentials) {
             $jwt = $this->generateJwt($credentials);
-            $accessToken = $this->getAccessToken($jwt);
-            Log::info('Access Token: ' . $accessToken);
-        } catch (\Exception $e) {
-            return 'Auth Error: ' . $e->getMessage();
-        }
+            return $this->getAccessToken($jwt);
+        });
 
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
         if (empty($tokens)) {
