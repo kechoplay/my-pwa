@@ -65,14 +65,17 @@
             })
         );
     });
+    const vapidKey = "BHxUOXVdEMbqXfbDKwvjHoKfRA2W-nLWd2TlHqmQNYSPIl2eo7LY39su6bDYFPutNlIpILoBDFjdB9rSNdZ-Euw"; // Từ Firebase Console
+</script>
+<script src="/js/app.js"></script>
+<script>
+    // Nhận message từ Service Worker
     navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data.type === 'NOTIFICATION_CLICK') {
             const data = event.data.data;
             document.getElementById('message').textContent = data.count_data;
         }
     });
-    const vapidKey = "BHxUOXVdEMbqXfbDKwvjHoKfRA2W-nLWd2TlHqmQNYSPIl2eo7LY39su6bDYFPutNlIpILoBDFjdB9rSNdZ-Euw"; // Từ Firebase Console
 </script>
-<script src="/js/app.js"></script>
 </body>
 </html>
