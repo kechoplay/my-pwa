@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Firebase\JWT\JWT;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 class PushController extends Controller
 {
@@ -26,8 +26,8 @@ class PushController extends Controller
             'iss' => $credentials['client_email'],
             'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
             'aud' => 'https://oauth2.googleapis.com/token',
-            'iat' => time(),
-            'exp' => time() + 3600,
+            'iat' => Carbon::now()->timestamp,
+            'exp' => Carbon::now()->timestamp + 3600,
         ])));
         $signatureInput = "$header.$payload";
 
@@ -39,6 +39,9 @@ class PushController extends Controller
         return "$signatureInput.$signature";
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function getAccessToken($jwt)
     {
         $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
@@ -61,7 +64,6 @@ class PushController extends Controller
     public function subscribe(Request $request)
     {
         $token = $request->input('token');
-        // Lưu token vào database (ví dụ: bảng 'subscriptions')
         DB::table('subscriptions')->updateOrInsert(
             ['token' => $token],
             ['created_at' => now()]
@@ -69,51 +71,24 @@ class PushController extends Controller
         return response()->json(['message' => 'Subscription saved']);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function sendPush()
     {
-        $serviceAccount = public_path('firebase-credentials.json');
-        $credentials = json_decode(file_get_contents($serviceAccount), true);
-
-        $accessToken = Cache::remember('fcm_access_token', 3500, function () use ($credentials) {
-            $jwt = $this->generateJwt($credentials);
-            return $this->getAccessToken($jwt);
-        });
+        $factory = (new Factory())->withServiceAccount(public_path('/public/firebase-credentials.json'));
+        $messaging = $factory->createMessaging();
 
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
-        if (empty($tokens)) {
-            return 'No tokens available';
-        }
+        if (empty($tokens)) return 'No subscribers';
 
-        $headers = [
-            'Authorization' => 'Bearer ' . $accessToken,
-            'Content-Type' => 'application/json',
-        ];
-        $client = new Client();
-        $projectId = env('FIREBASE_PROJECT_ID');
-        $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
+        $message = CloudMessage::new()
+            ->withNotification([
+                'title' => 'Hello from Laravel!',
+                'body' => 'This is a Firebase push notification.'
+            ]);
 
-        foreach ($tokens as $token) {
-            $payload = [
-                'message' => [
-                    'token' => $token, // Gửi đến token đầu tiên, có thể lặp qua tất cả
-                    'notification' => [
-                        'title' => 'Test from Laravel',
-                        'body' => 'This is a push via HTTP v1!'
-                    ]
-                ]
-            ];
-
-            try {
-                $response = $client->post($url, [
-                    'headers' => $headers,
-                    'json' => $payload,
-                ]);
-                return $response->getBody()->getContents();
-            } catch (\Exception $e) {
-                return 'Error: ' . $e->getMessage();
-            } catch (GuzzleException $e) {
-                return 'Error: ' . $e->getMessage();
-            }
-        }
+        $messaging->sendMulticast($message, $tokens);
+        return 'Push sent!';
     }
 }
