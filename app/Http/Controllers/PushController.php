@@ -8,8 +8,10 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class PushController extends Controller
 {
@@ -76,19 +78,19 @@ class PushController extends Controller
      */
     public function sendPush()
     {
-        $factory = (new Factory())->withServiceAccount(public_path('/public/firebase-credentials.json'));
+        $factory = (new Factory())->withServiceAccount(public_path('firebase-credentials.json'));
         $messaging = $factory->createMessaging();
 
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
         if (empty($tokens)) return 'No subscribers';
 
+        $notification = Notification::create('Hello from Laravel!', 'This is a push notification with kreait/firebase-php 7.10');
         $message = CloudMessage::new()
-            ->withNotification([
-                'title' => 'Hello from Laravel!',
-                'body' => 'This is a Firebase push notification.'
-            ]);
+            ->withNotification($notification)
+            ->withHighestPossiblePriority();
 
-        $messaging->sendMulticast($message, $tokens);
+        $report = $messaging->sendMulticast($message, $tokens);
+        Log::info('FCM Send Report: ' . json_encode($report));
         return 'Push sent!';
     }
 }
