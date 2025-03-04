@@ -7,38 +7,44 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class PushController extends Controller
 {
-    private function getAccessToken()
+    /**
+     * @throws \Exception
+     */
+    private function generateJwt($credentials)
     {
-        $credentials = json_decode(file_get_contents(public_path('firebase-credentials.json')), true);
-        $clientEmail = $credentials['client_email'];
-        $privateKey = $credentials['private_key'];
+        $header = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode([
+            'alg' => 'RS256',
+            'typ' => 'JWT'
+        ])));
+        $payload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode([
+            'iss' => $credentials['client_email'],
+            'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+            'aud' => 'https://oauth2.googleapis.com/token',
+            'iat' => time(),
+            'exp' => time() + 3600,
+        ])));
+        $signatureInput = "$header.$payload";
 
-        // Tạo JWT
-        $now = time();
-        $payload = [
-            'iss' => $clientEmail, // Issuer (client email từ service account)
-            'sub' => $clientEmail, // Subject
-            'aud' => 'https://oauth2.googleapis.com/token', // Audience
-            'iat' => $now, // Issued at
-            'exp' => $now + 3600, // Expiration (1 giờ)
-            'scope' => 'https://www.googleapis.com/auth/firebase.messaging' // Scope cho FCM
-        ];
+        if (!openssl_sign($signatureInput, $signature, $credentials['private_key'], 'sha256')) {
+            throw new \Exception('Failed to sign JWT: ' . openssl_error_string());
+        }
+        $signature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
-        $jwt = JWT::encode($payload, $privateKey, 'RS256');
-        // Gửi yêu cầu lấy access token
-        $client = new Client();
-        $response = $client->post('https://oauth2.googleapis.com/token', [
-            'form_params' => [
-                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-                'assertion' => $jwt,
-            ],
+        return "$signatureInput.$signature";
+    }
+
+    private function getAccessToken($jwt)
+    {
+        $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion' => $jwt,
         ]);
 
-        $data = json_decode($response->getBody()->getContents(), true);
-        return $data['access_token'];
+        return $response->json()['access_token'];
     }
 
     public function subscribe(Request $request)
@@ -54,13 +60,20 @@ class PushController extends Controller
 
     public function sendPush()
     {
+        $credentials = json_decode(file_get_contents(public_path('firebase-credentials.json')), true);
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
         if (empty($tokens)) {
             return 'No tokens available';
         }
 
+        $jwt = $this->generateJwt($credentials);
+        $accessToken = $this->getAccessToken($jwt);
+        $url = 'https://fcm.googleapis.com/v1/projects/your-project-id/messages:send';
+        $headers = [
+            'Authorization' => 'Bearer ' . $accessToken,
+            'Content-Type' => 'application/json',
+        ];
         $client = new Client();
-        $accessToken = $this->getAccessToken();
         $projectId = env('FIREBASE_PROJECT_ID');
         $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
 
@@ -76,10 +89,7 @@ class PushController extends Controller
 
         try {
             $response = $client->post($url, [
-                'headers' => [
-                    'Authorization' => "Bearer $accessToken",
-                    'Content-Type' => 'application/json',
-                ],
+                $headers,
                 'json' => $payload,
             ]);
             return $response->getBody()->getContents();
