@@ -9,8 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\MessagingException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\MessageTarget;
 use Kreait\Firebase\Messaging\Notification;
 
 class PushController extends Controller
@@ -84,13 +87,23 @@ class PushController extends Controller
         $tokens = DB::table('subscriptions')->pluck('token')->toArray();
         if (empty($tokens)) return 'No subscribers';
 
-        $notification = Notification::create('Hello from Laravel!', 'This is a push notification with kreait/firebase-php 7.10');
-        $message = CloudMessage::new()
-            ->withNotification($notification)
-            ->withHighestPossiblePriority();
+        foreach ($tokens as $token) {
+            $notification = Notification::create('Hello from Laravel!', 'This is a push notification with kreait/firebase-php 7.10');
+            $message = CloudMessage::withTarget('token', $token)
+                ->withNotification($notification);
 
-        $report = $messaging->sendMulticast($message, $tokens);
-        Log::info('FCM Send Report: ' . json_encode($report));
+            try {
+                $report = $messaging->send($message);
+                dd($report);
+            } catch (MessagingException $e) {
+                Log::debug($e);
+                return $e;
+            } catch (FirebaseException $e) {
+                Log::debug($e);
+                return $e;
+            }
+        }
+
         return 'Push sent!';
     }
 }

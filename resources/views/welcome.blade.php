@@ -20,13 +20,13 @@
 </div>
 <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyAkqFEvZznlbpc6nfgS8z9msRxyMlWANwI",
-        authDomain: "fir-bfbd2.firebaseapp.com",
-        projectId: "fir-bfbd2",
-        storageBucket: "fir-bfbd2.firebasestorage.app",
-        messagingSenderId: "183972630362",
-        appId: "1:183972630362:web:419dbd05e8ffde97d32d63",
-        measurementId: "G-CZGDHBNCLB"
+        apiKey: "AIzaSyDwl3GCmSxDofUhZOi4knT8jcakQ7Vk2E8",
+        authDomain: "pwa-firebase-d30dc.firebaseapp.com",
+        projectId: "pwa-firebase-d30dc",
+        storageBucket: "pwa-firebase-d30dc.firebasestorage.app",
+        messagingSenderId: "1043174958885",
+        appId: "1:1043174958885:web:22391757de46441bf01ccc",
+        measurementId: "G-32FLFT13BT"
     };
     firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();
@@ -66,7 +66,7 @@
             })
         );
     });
-    const vapidKey = "BCl_JcvmY9dVoI6b-aYjPUTc3gn1BEfiULEN0EOEfByy-fkxN1p-d4YCyw7PNPaFUyuGadmsu90bjle0Nzu0Idw"; // Từ Firebase Console
+    const vapidKey = "BB0N4rY74v2hmv9DskN1HCd0dumaeeVyvkiVJRSmSQNIZef32xKXVoiPeVu3OPH-kdXSww3_VTPdbx0bPT99dZw"; // Từ Firebase Console
 </script>
 <script src="/js/app.js"></script>
 </body>
