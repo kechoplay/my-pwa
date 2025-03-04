@@ -23,23 +23,3 @@ messaging.onBackgroundMessage((payload) => {
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
-
-self.addEventListener('push', function(event) {
-    const data = event.data.json();  // Assuming the server sends JSON
-    const options = {
-        body: data.body,
-        icon: 'icon.png',
-        badge: 'badge.png'
-    };
-    event.waitUntil(
-        self.registration.showNotification(data.title, options)
-    );
-});
-
-messaging.onMessage((payload) => {
-    console.log("Message received:", payload);
-    new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: "/logo.png",
-    });
-});
