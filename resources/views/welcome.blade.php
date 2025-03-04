@@ -20,13 +20,13 @@
 </div>
 <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyDwl3GCmSxDofUhZOi4knT8jcakQ7Vk2E8",
-        authDomain: "pwa-firebase-d30dc.firebaseapp.com",
-        projectId: "pwa-firebase-d30dc",
-        storageBucket: "pwa-firebase-d30dc.firebasestorage.app",
-        messagingSenderId: "1043174958885",
-        appId: "1:1043174958885:web:22391757de46441bf01ccc",
-        measurementId: "G-32FLFT13BT"
+        apiKey: "AIzaSyD384SYE1y9KQltxbmQpkSAx07G1G7YcDo",
+        authDomain: "telegram2-214b2.firebaseapp.com",
+        databaseURL: "https://telegram2-214b2.firebaseio.com",
+        projectId: "telegram2-214b2",
+        storageBucket: "telegram2-214b2.firebasestorage.app",
+        messagingSenderId: "790813086222",
+        appId: "1:790813086222:web:005fd7d38ff274e40a625f"
     };
     firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();
@@ -66,7 +66,7 @@
             })
         );
     });
-    const vapidKey = "BB0N4rY74v2hmv9DskN1HCd0dumaeeVyvkiVJRSmSQNIZef32xKXVoiPeVu3OPH-kdXSww3_VTPdbx0bPT99dZw"; // Từ Firebase Console
+    const vapidKey = "BHxUOXVdEMbqXfbDKwvjHoKfRA2W-nLWd2TlHqmQNYSPIl2eo7LY39su6bDYFPutNlIpILoBDFjdB9rSNdZ-Euw"; // Từ Firebase Console
 </script>
 <script src="/js/app.js"></script>
 </body>

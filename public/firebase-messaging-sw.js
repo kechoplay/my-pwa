@@ -2,13 +2,13 @@ importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDwl3GCmSxDofUhZOi4knT8jcakQ7Vk2E8",
-    authDomain: "pwa-firebase-d30dc.firebaseapp.com",
-    projectId: "pwa-firebase-d30dc",
-    storageBucket: "pwa-firebase-d30dc.firebasestorage.app",
-    messagingSenderId: "1043174958885",
-    appId: "1:1043174958885:web:22391757de46441bf01ccc",
-    measurementId: "G-32FLFT13BT"
+    apiKey: "AIzaSyD384SYE1y9KQltxbmQpkSAx07G1G7YcDo",
+    authDomain: "telegram2-214b2.firebaseapp.com",
+    databaseURL: "https://telegram2-214b2.firebaseio.com",
+    projectId: "telegram2-214b2",
+    storageBucket: "telegram2-214b2.firebasestorage.app",
+    messagingSenderId: "790813086222",
+    appId: "1:790813086222:web:005fd7d38ff274e40a625f"
 };
 
 firebase.initializeApp(firebaseConfig);

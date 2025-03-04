@@ -88,6 +88,7 @@ class PushController extends Controller
         if (empty($tokens)) return 'No subscribers';
 
         foreach ($tokens as $token) {
+            $token = 'ewb2mJ8_oKJDNDTGJU-HY2:APA91bGN7DPDbdPINX65Tu0PE2IJ03BUpaUkQZAoNSpKnzvkjcu1R3D6IcshhU4lw9ON7nAnoKImmKCRfqQUKV4PGUznUa9lRK_8qZJCpaSQlDD4fNsdRPo';
             $notification = Notification::create('Hello from Laravel!', 'This is a push notification with kreait/firebase-php 7.10');
             $message = CloudMessage::withTarget('token', $token)
                 ->withNotification($notification);
