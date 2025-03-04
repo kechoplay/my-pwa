@@ -92,26 +92,28 @@ class PushController extends Controller
         $projectId = env('FIREBASE_PROJECT_ID');
         $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
 
-        $payload = [
-            'message' => [
-                'token' => $tokens[0], // Gửi đến token đầu tiên, có thể lặp qua tất cả
-                'notification' => [
-                    'title' => 'Test from Laravel',
-                    'body' => 'This is a push via HTTP v1!'
+        foreach ($tokens as $token) {
+            $payload = [
+                'message' => [
+                    'token' => $token, // Gửi đến token đầu tiên, có thể lặp qua tất cả
+                    'notification' => [
+                        'title' => 'Test from Laravel',
+                        'body' => 'This is a push via HTTP v1!'
+                    ]
                 ]
-            ]
-        ];
+            ];
 
-        try {
-            $response = $client->post($url, [
-                'headers' => $headers,
-                'json' => $payload,
-            ]);
-            return $response->getBody()->getContents();
-        } catch (\Exception $e) {
-            return 'Error: ' . $e->getMessage();
-        } catch (GuzzleException $e) {
-            return 'Error: ' . $e->getMessage();
+            try {
+                $response = $client->post($url, [
+                    'headers' => $headers,
+                    'json' => $payload,
+                ]);
+                return $response->getBody()->getContents();
+            } catch (\Exception $e) {
+                return 'Error: ' . $e->getMessage();
+            } catch (GuzzleException $e) {
+                return 'Error: ' . $e->getMessage();
+            }
         }
     }
 }
