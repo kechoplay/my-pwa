@@ -30,14 +30,14 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
     });
 });
 
-// messaging.onMessage((payload) => {
-//     console.log('Foreground message received:', payload);
-//     const notificationTitle = payload.notification.title;
-//     const notificationOptions = {
-//         body: payload.notification.body,
-//         icon: 'icon.png'
-//     };
-//     navigator.serviceWorker.ready.then((registration) => {
-//         registration.showNotification(notificationTitle, notificationOptions);
-//     });
-// });
+messaging.onBackgroundMessage((payload) => {
+    if (!navigator.serviceWorker.controller) {
+        console.log('Background message received:', payload);
+        const notificationTitle = payload.notification.title;
+        const notificationOptions = {
+            body: payload.notification.body,
+            icon: '/images/favicon/favicon-96x96.png'
+        };
+        self.registration.showNotification(notificationTitle, notificationOptions);
+    }
+});
