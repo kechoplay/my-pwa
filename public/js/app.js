@@ -72,3 +72,10 @@ self.addEventListener('notificationclick', (event) => {
             })
     );
 });
+
+navigator.serviceWorker.addEventListener('message', (event) => {
+    // if (event.data.type === 'NOTIFICATION_CLICK') {
+        const data = event.data.data;
+        document.getElementById('message').textContent = 'test';
+    // }
+});
