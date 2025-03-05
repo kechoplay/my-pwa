@@ -14,3 +14,20 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
+self.addEventListener('notificationclick', function (event) {
+    console.log('[SW] Notification Clicked:', event.notification.data);
+
+    event.notification.close(); // Close notification
+
+    event.waitUntil(
+        clients.matchAll({ type: "window", includeUncontrolled: true }).then(clientList => {
+            if (clientList.length > 0) {
+                let client = clientList[0]; // Use first available client
+                client.postMessage({ type: "NOTIFICATION_CLICKED", data: event.notification.data });
+                return client.focus();
+            } else {
+                return clients.openWindow('/');
+            }
+        })
+    );
+});
