@@ -16,14 +16,14 @@ const messaging = firebase.messaging();
 
 self.addEventListener('notificationclick', event => {
     const clickedNotification = event.notification;
-    const notificationData = clickedNotification.data;
+    // const notificationData = clickedNotification.data;
     clickedNotification.close(); // Close the notification pop-up
     const urlToOpen = 'https://test-wpa-noti.watermeru.com?custom=123';
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientsArr => {
             for (const client of clientsArr) {
                 if ('focus' in client) {
-                    client.postMessage(clickedNotification);
+                    client.postMessage({data: 'aaa'});
                     return client.focus();
                 }
             }
