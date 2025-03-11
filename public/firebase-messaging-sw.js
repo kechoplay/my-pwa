@@ -14,14 +14,31 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
+self.addEventListener('push', function(event) {
+    const data = event.data?.json() || {};
+
+    const title = 'Notification Title';
+    const options = {
+        body: 'Notification Body',
+        icon: '/images/favicon/favicon-96x96.png',
+        data: {
+            count_data: '1'
+        }
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(title, options)
+    );
+});
+
 self.addEventListener('notificationclick', event => {
     const clickedNotification = event.notification;
     const notificationData = clickedNotification.data;
     clickedNotification.close(); // Close the notification pop-up
-    const urlToOpen = '/?custom=123';
+    const urlToOpen = 'https://test-wpa-noti.watermeru.com?custom=123';
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientsArr => {
-            for (const client of clientList) {
+            for (const client of clientsArr) {
                 // If the PWA is already open in background
                 if (client.url.includes('/') || client.url.includes('')) {
                     // PostMessage will work here
