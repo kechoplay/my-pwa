@@ -14,21 +14,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-self.addEventListener('push', function(event) {
-    const title = 'Notification Title';
-    const options = {
-        body: `${JSON.stringify(event)}`,
-        icon: '/images/favicon/favicon-96x96.png',
-        data: {
-            count_data: '1'
-        }
-    };
-
-    event.waitUntil(
-        self.registration.showNotification(title, options)
-    );
-});
-
 self.addEventListener('notificationclick', event => {
     const clickedNotification = event.notification;
     const notificationData = clickedNotification.data;
