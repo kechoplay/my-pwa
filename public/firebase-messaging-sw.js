@@ -14,20 +14,29 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-self.addEventListener('notificationclick', function (event) {
-    console.log('[SW] Notification Clicked:', event.notification.data);
-
-    event.notification.close(); // Close notification
+self.addEventListener('notificationclick', event => {
+    const clickedNotification = event.notification;
+    const notificationData = clickedNotification.data;
+    clickedNotification.close(); // Close the notification pop-up
 
     event.waitUntil(
-        clients.matchAll({ type: "window", includeUncontrolled: true }).then(clientList => {
-            if (clientList.length > 0) {
-                let client = clientList[0]; // Use first available client
-                client.postMessage({ type: "NOTIFICATION_CLICKED", data: event.notification.data });
-                return client.focus();
-            } else {
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+            // Check if any window is already open
+            for (let client of windowClients) {
+                // If app is open, focus it and post message
+                if (client.url === '/' && 'focus' in client) {
+                    client.postMessage(notificationData); // send data
+                    return client.focus();
+                }
+            }
+
+            // If not open, open new window with data URL
+            if (notificationData && notificationData.url) {
                 return clients.openWindow('/');
             }
+
+            // Fallback: open homepage
+            return clients.openWindow('/');
         })
     );
 });
