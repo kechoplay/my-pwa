@@ -18,10 +18,20 @@ self.addEventListener('notificationclick', event => {
     const clickedNotification = event.notification;
     const notificationData = clickedNotification.data;
     clickedNotification.close(); // Close the notification pop-up
-
+    const urlToOpen = '/?custom=123';
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientsArr => {
-            return clients.openWindow(`https://test-wpa-noti.watermeru.com?custom=123`);
+            for (const client of clientList) {
+                // If the PWA is already open in background
+                if (client.url.includes('/') || client.url.includes('')) {
+                    // PostMessage will work here
+                    client.postMessage(clickedNotification);
+                    return client.focus();
+                }
+            }
+
+            // If not open, open it with data in URL
+            return clients.openWindow(urlToOpen);
         })
     );
 });
