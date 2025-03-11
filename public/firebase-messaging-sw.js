@@ -20,25 +20,7 @@ self.addEventListener('notificationclick', event => {
     clickedNotification.close(); // Close the notification pop-up
 
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-            // Check if any window is already open
-            for (let client of windowClients) {
-                // If app is open, focus it and post message
-                if (client.url === '/' && 'focus' in client) {
-                    client.postMessage(notificationData); // send data
-                    return client.focus();
-                }
-            }
-
-            // If not open, open new window with data URL
-            if (notificationData && notificationData.url) {
-                return clients.openWindow('/');
-            }
-
-            // Fallback: open homepage
-            clients.postMessage(notificationData); // send data
-            return clients.openWindow('/');
-        })
+        clients.openWindow('/')
     );
 });
 
