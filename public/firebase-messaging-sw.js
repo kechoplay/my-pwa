@@ -22,9 +22,7 @@ self.addEventListener('notificationclick', event => {
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientsArr => {
             for (const client of clientsArr) {
-                // If the PWA is already open in background
-                if (client.url.includes('/') || client.url.includes('')) {
-                    // PostMessage will work here
+                if ('focus' in client) {
                     client.postMessage(clickedNotification);
                     return client.focus();
                 }
