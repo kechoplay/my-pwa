@@ -20,7 +20,7 @@ self.addEventListener('notificationclick', event => {
     clickedNotification.close(); // Close the notification pop-up
 
     event.waitUntil(
-        clients.openWindow('/')
+        clients.openWindow('https://test-wpa-noti.watermeru.com?custom=123')
     );
 });
 
