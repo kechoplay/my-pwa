@@ -36,7 +36,24 @@ self.addEventListener('notificationclick', event => {
             }
 
             // Fallback: open homepage
+            clients.postMessage(notificationData); // send data
             return clients.openWindow('/');
         })
     );
+});
+
+messaging.onMessage((payload) => {
+    console.log("Message received:", payload);
+    const notification = new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: '/images/favicon/favicon-96x96.png',
+        data: {
+            count_data: '1'
+        }
+    });
+    notification.onclick = function (event) {
+        event.preventDefault();
+        const data = event.currentTarget.data
+        document.getElementById('message').textContent = data.count_data;
+    }
 });
