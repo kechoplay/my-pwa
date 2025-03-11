@@ -14,7 +14,7 @@ if ('serviceWorker' in navigator) {
 document.getElementById('subscribeBtn').addEventListener('click', () => {
     Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
-            messaging.getToken({ vapidKey }).then(token => {
+            messaging.getToken({vapidKey}).then(token => {
                 console.log('FCM Token:', token);
                 fetch('/subscribe', {
                     method: 'POST',
@@ -23,7 +23,7 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
-                    body: JSON.stringify({ token })
+                    body: JSON.stringify({token})
                 }).then(response => response.json())
                     .then(data => {
                         document.getElementById('message').textContent = 'Subscribed successfully!';

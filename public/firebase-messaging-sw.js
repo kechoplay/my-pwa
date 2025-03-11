@@ -15,11 +15,9 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 self.addEventListener('push', function(event) {
-    const data = event.data?.json() || {};
-
     const title = 'Notification Title';
     const options = {
-        body: 'Notification Body',
+        body: `${JSON.stringify(event)}`,
         icon: '/images/favicon/favicon-96x96.png',
         data: {
             count_data: '1'
@@ -51,20 +49,4 @@ self.addEventListener('notificationclick', event => {
             return clients.openWindow(urlToOpen);
         })
     );
-});
-
-messaging.onMessage((payload) => {
-    console.log("Message received:", payload);
-    const notification = new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: '/images/favicon/favicon-96x96.png',
-        data: {
-            count_data: '1'
-        }
-    });
-    notification.onclick = function (event) {
-        event.preventDefault();
-        const data = event.currentTarget.data
-        document.getElementById('message').textContent = data.count_data;
-    }
 });
