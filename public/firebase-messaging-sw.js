@@ -16,9 +16,9 @@ const messaging = firebase.messaging();
 
 self.addEventListener('notificationclick', event => {
     const clickedNotification = event.notification;
-    // const notificationData = clickedNotification.data;
+    const notificationData = clickedNotification.data;
     clickedNotification.close(); // Close the notification pop-up
-    const urlToOpen = '/?custom=123';
+    const urlToOpen = `/?custom=${JSON.stringify(notificationData)}`;
     event.waitUntil(
         clients.openWindow(urlToOpen)
     );

@@ -56,20 +56,12 @@
             }
         });
     }
-    messaging.onMessage((payload) => {
-        console.log('Foreground:', payload);
-        navigator.serviceWorker.ready.then((reg) =>
-            reg.showNotification(payload.notification.title, {
-                body: payload.notification.body,
-                icon: '/images/favicon/favicon-96x96.png'
-            })
-        );
-    });
 
     const params = new URLSearchParams(window.location.search);
     const customId = params.get('custom');
 
     if (customId) {
+        alert(customId)
         console.log("Notification Data:", customId);
         // You can use this to load content, scroll to a section, etc.
         document.getElementById('message').textContent = `Clicked notification for ID: ${customId}`;
