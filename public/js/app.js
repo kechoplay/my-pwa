@@ -41,7 +41,9 @@ messaging.onMessage((payload) => {
     notification.onclick = function (event) {
         event.preventDefault();
         const data = event.currentTarget.data
-        document.getElementById('message').textContent = data.url;
+        if (notificationData.data.onclick == "true") {
+            document.getElementById('message').textContent = data.url;
+        }
     }
 });
 
@@ -49,7 +51,7 @@ navigator.serviceWorker.addEventListener('message', event => {
     const notificationData = event.data;
     console.log('Notification clicked with data:', notificationData);
     // window.history.replaceState({}, '', notificationData.data.url);
-    if (notificationData.data.onclick == "true") {
+    if (window.location.href.includes('test-wpa-noti.watermeru.com')) {
         document.getElementById('message').textContent = `${notificationData.data.url}`;
     }
 });
