@@ -27,6 +27,6 @@ self.addEventListener('notificationclick', event => {
 navigator.serviceWorker.addEventListener('message', event => {
     const notificationData = event.data;
     console.log('Notification clicked with data:', notificationData);
-    window.history.replaceState({}, '', notificationData.data.url);
+    window.location.href = notificationData.data.url
     document.getElementById('message').textContent = `${notificationData.data.url}`;
 });
