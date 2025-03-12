@@ -33,5 +33,10 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
 navigator.serviceWorker.addEventListener('message', event => {
     const notificationData = event.data;
     console.log('Notification clicked with data:', notificationData);
-    window.location.href = notificationData.notification.click_action
+    const data = notificationData.notification.click_action
+    const myKey = localStorage.getItem('myKey')
+    if (myKey != data) {
+        localStorage.setItem('myKey', data)
+        window.location.href = data
+    }
 });
