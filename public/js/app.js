@@ -30,28 +30,12 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
     });
 });
 
-
-messaging.onMessage((payload) => {
-    console.log("Message received:", payload);
-    const notification = new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: '/images/favicon/favicon-96x96.png',
-        data: payload.data
-    });
-    notification.onclick = function (event) {
-        event.preventDefault();
-        const data = event.currentTarget.data
-        if (notificationData.data.onclick == "true") {
-            document.getElementById('message').textContent = data.url;
-        }
-    }
-});
-
 navigator.serviceWorker.addEventListener('message', event => {
     const notificationData = event.data;
     console.log('Notification clicked with data:', notificationData);
     // window.history.replaceState({}, '', notificationData.data.url);
-    if (window.location.href.includes('test-wpa-noti.watermeru.com')) {
+    alert(window.location.href)
+    if (!window.location.href.includes('test-wpa-noti.watermeru.com')) {
         document.getElementById('message').textContent = `${notificationData.data.url}`;
     }
 });
