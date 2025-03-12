@@ -75,9 +75,6 @@
         // You can use this to load content, scroll to a section, etc.
         document.getElementById('message').textContent = `Clicked notification for ID: ${customId}`;
     }
-    navigator.serviceWorker.addEventListener('message', function(event) {
-        document.getElementById('message').textContent = `Clicked notification`;
-    });
     const vapidKey = "BHxUOXVdEMbqXfbDKwvjHoKfRA2W-nLWd2TlHqmQNYSPIl2eo7LY39su6bDYFPutNlIpILoBDFjdB9rSNdZ-Euw"; // Từ Firebase Console
 </script>
 <script src="/js/app.js"></script>

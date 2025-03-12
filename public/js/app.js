@@ -51,7 +51,7 @@ messaging.onMessage((payload) => {
 });
 
 navigator.serviceWorker.addEventListener('message', event => {
-    const notificationData = event.data;
+    const notificationData = event;
     console.log('Notification clicked with data:', notificationData);
     document.getElementById('message').textContent = `${JSON.stringify(notificationData)}`;
     // You can now route or render content based on this data
