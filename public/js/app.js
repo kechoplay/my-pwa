@@ -34,7 +34,6 @@ navigator.serviceWorker.addEventListener('message', event => {
     const notificationData = event.data;
     console.log('Notification clicked with data:', notificationData);
     // window.history.replaceState({}, '', notificationData.data.url);
-    alert(window.location.href)
     if (!window.location.href.includes('test-wpa-noti.watermeru.com')) {
         document.getElementById('message').textContent = `${notificationData.data.url}`;
     }
