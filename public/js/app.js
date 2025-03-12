@@ -53,5 +53,6 @@ messaging.onMessage((payload) => {
 navigator.serviceWorker.addEventListener('message', event => {
     const notificationData = event.data;
     console.log('Notification clicked with data:', notificationData);
+    window.location.href = notificationData.data.url
     document.getElementById('message').textContent = `${notificationData.data.url}`;
 });
