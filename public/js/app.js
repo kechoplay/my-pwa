@@ -31,7 +31,9 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
 });
 
 navigator.serviceWorker.addEventListener('message', event => {
-    const notificationData = event.data;
-    console.log('Notification clicked with data:', notificationData);
-    window.location.href = notificationData.notification.click_action
+    if (event.data?.type !== 'PUSH_MESSAGE') {
+        const notificationData = event.data;
+        console.log('Notification clicked with data:', notificationData);
+        window.location.href = notificationData.notification.click_action
+    }
 });
