@@ -39,20 +39,18 @@ messaging.onMessage((payload) => {
     const notification = new Notification(payload.notification.title, {
         body: payload.notification.body,
         icon: '/images/favicon/favicon-96x96.png',
-        data: {
-            count_data: '1'
-        }
+        data: payload.data
     });
     notification.onclick = function (event) {
         event.preventDefault();
         const data = event.currentTarget.data
-        document.getElementById('message').textContent = data.count_data;
+        document.getElementById('message').textContent = data.url;
     }
 });
 
 navigator.serviceWorker.addEventListener('message', event => {
     const notificationData = event.data;
     console.log('Notification clicked with data:', notificationData);
-    window.history.replaceState({}, '', notificationData.data.url);
-    document.getElementById('message').textContent = `${notificationData.data.url}`;
+    // window.history.replaceState({}, '', notificationData.data.url);
+    // document.getElementById('message').textContent = `${notificationData.data.url}`;
 });
