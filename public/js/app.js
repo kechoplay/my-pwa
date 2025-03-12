@@ -6,9 +6,6 @@ if ('serviceWorker' in navigator) {
         .catch(error => {
             console.log('Service Worker registration failed:', error);
         });
-    navigator.serviceWorker.addEventListener('message', event => {
-        document.getElementById('message').textContent = `${JSON.stringify(event.data)}`;
-    });
 }
 
 document.getElementById('subscribeBtn').addEventListener('click', () => {
