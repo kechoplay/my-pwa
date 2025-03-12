@@ -61,7 +61,6 @@
     const customId = params.get('custom');
 
     if (customId) {
-        alert(customId)
         console.log("Notification Data:", customId);
         // You can use this to load content, scroll to a section, etc.
         document.getElementById('message').textContent = `Clicked notification for ID: ${customId}`;
