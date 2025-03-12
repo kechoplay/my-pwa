@@ -66,14 +66,14 @@
         );
     });
 
-    const params = new URLSearchParams(window.location.search);
-    const customId = params.get('custom');
-
-    if (customId) {
-        console.log("Notification Data:", customId);
-        // You can use this to load content, scroll to a section, etc.
-        document.getElementById('message').textContent = `Clicked notification for ID: ${customId}`;
-    }
+    // const params = new URLSearchParams(window.location.search);
+    // const customId = params.get('custom');
+    //
+    // if (customId) {
+    //     console.log("Notification Data:", customId);
+    //     // You can use this to load content, scroll to a section, etc.
+    //     document.getElementById('message').textContent = `Clicked notification for ID: ${customId}`;
+    // }
     const vapidKey = "BHxUOXVdEMbqXfbDKwvjHoKfRA2W-nLWd2TlHqmQNYSPIl2eo7LY39su6bDYFPutNlIpILoBDFjdB9rSNdZ-Euw"; // Từ Firebase Console
 </script>
 <script src="/js/app.js"></script>
