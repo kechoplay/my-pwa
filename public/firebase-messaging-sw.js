@@ -14,27 +14,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-self.addEventListener('push', event => {
+self.addEventListener('notificationclick', event => {
     const clickedNotification = event.notification;
     const notificationData = clickedNotification.data;
     clickedNotification.close(); // Close the notification pop-up
     const urlToOpen = notificationData.notification.click_action;
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            const isAppOpen = clientList.length > 0;
-
-            if (isAppOpen) {
-                // App đang mở → gửi message cho app xử lý nội bộ (không show notification)
-                clientList.forEach(client => {
-                    client.postMessage({
-                        type: 'PUSH_MESSAGE',
-                    });
-                });
-                console.log('📱 App đang mở → không show notification');
-            } else {
-                // App không mở → hiển thị notification như bình thường
-
-            }
-        })
+        clients.openWindow(urlToOpen)
     );
 });
