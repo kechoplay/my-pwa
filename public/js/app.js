@@ -7,7 +7,7 @@ if ('serviceWorker' in navigator) {
                 alert(JSON.stringify(notificationData))
                 console.log('Notification clicked with data:', notificationData);
                 if (notificationData.messageType == 'notification-clicked') {
-                    window.location.href = notificationData.notification.click_action
+                    window.location.href = notificationData.data.url
                 }
             });
         })
