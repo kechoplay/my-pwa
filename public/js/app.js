@@ -30,8 +30,8 @@ document.getElementById('subscribeBtn').addEventListener('click', () => {
     });
 });
 
-navigator.serviceWorker.addEventListener('message', event => {
-    const notificationData = event.data;
-    console.log('Notification clicked with data:', notificationData);
-    window.location.href = notificationData.data.url
-});
+// navigator.serviceWorker.addEventListener('message', event => {
+//     const notificationData = event.data;
+//     console.log('Notification clicked with data:', notificationData);
+//     window.location.href = notificationData.data.url
+// });
