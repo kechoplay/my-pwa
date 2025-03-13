@@ -23,7 +23,7 @@ self.addEventListener('notificationclick', event => {
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientsArr => {
             for (const client of clientsArr) {
                 if ('focus' in client) {
-                    client.postMessage({mydata: 'aaa'});
+                    client.postMessage({type_send: 'aaa'});
                     return client.focus();
                 }
             }
