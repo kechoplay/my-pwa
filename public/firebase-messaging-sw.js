@@ -20,12 +20,13 @@ self.addEventListener('notificationclick', event => {
     clickedNotification.close(); // Close the notification pop-up
     const urlToOpen = notificationData.notification.click_action;
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientsArr => {
-            for (const client of clientsArr) {
-                if ('focus' in client) {
-                    client.postMessage({type_send: 'aaa'});
-                    return client.focus();
-                }
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+            if (clientList.length > 0) {
+                // ✅ gửi postMessage về tab đang mở
+                clientList[0].postMessage({
+                    type: 'notification_click',
+                });
+                return clientList[0].focus();
             }
 
             // If not open, open it with data in URL
