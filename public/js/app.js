@@ -6,7 +6,9 @@ if ('serviceWorker' in navigator) {
                 const notificationData = event.data;
                 alert(JSON.stringify(notificationData))
                 console.log('Notification clicked with data:', notificationData);
-                // window.location.href = notificationData.notification.click_action
+                if (notificationData.messageType == 'notification-clicked') {
+                    window.location.href = notificationData.notification.click_action
+                }
             });
         })
         .catch(error => {
